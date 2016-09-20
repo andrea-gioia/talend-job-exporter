@@ -51,7 +51,11 @@ public class JobExporter {
      * @throws JobExportException if some jobs failed to be exported
      */
     public BuildResult export() throws JobExportException {
-        final List<RepositoryNode> nodes = ProjectNodeUtils.findJobsByPath(jobExporterConfig.getJobsToExport());
+        String searchPattern = jobExporterConfig.getJobsToExport();
+
+        System.out.println("Searching for nodes to export matching pattern : " + searchPattern);
+
+        final List<RepositoryNode> nodes = ProjectNodeUtils.findJobsByPath( searchPattern );
 
         try {
             final Job job = CorePlugin.getDefault().getCodeGeneratorService().initializeTemplates();

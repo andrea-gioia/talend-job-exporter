@@ -44,9 +44,11 @@ public final class ProjectNodeUtils {
      * @throws IllegalStateException if there is no matching node
      */
     public static RepositoryNode getNodeByLabel(IRepositoryNode node, String label) {
+
         for (IRepositoryNode child : node.getChildren()) {
             if (label.equals(child.getLabel())) {
                 return (RepositoryNode) child;
+            }else{
             }
         }
 
@@ -71,12 +73,22 @@ public final class ProjectNodeUtils {
      */
     public static List<RepositoryNode> findChildrenByPath(IRepositoryNode repositoryNode, String path) {
         final List<RepositoryNode> nodes = new ArrayList<>();
+        String fullElementPath;
 
+       
         if (repositoryNode.getChildren() != null) {
             for (IRepositoryNode iRepositoryNode : repositoryNode.getChildren()) {
+
+
                 if (iRepositoryNode.getType().equals(ENodeType.REPOSITORY_ELEMENT)) {
-                    if (isMatching(repositoryNode, path)) {
+                    // Display path for debug :
+                    fullElementPath=getNodePath(iRepositoryNode) +  iRepositoryNode.getLabel() ;
+
+                    if (fullElementPath.matches(path)) {
                         nodes.add((RepositoryNode) iRepositoryNode);
+                        System.out.println(" ++> Added node " + iRepositoryNode.getLabel() );
+                    }else{
+                        System.out.println("   --> Node " + fullElementPath + " does not match pattern.");
                     }
                 } else {
                     nodes.addAll(findChildrenByPath(iRepositoryNode, path));
@@ -91,6 +103,14 @@ public final class ProjectNodeUtils {
      * Checks whether the specified node match the specified path.
      */
     private static boolean isMatching(IRepositoryNode repositoryNode, String path) {
+
         return REPOSITORY_SERVICE.getRepositoryPath(repositoryNode).toString().matches(path);
     }
+
+    /**
+     * Returns element path :
+     */
+    private static String getNodePath(IRepositoryNode repositoryNode ) {
+        return REPOSITORY_SERVICE.getRepositoryPath(repositoryNode).toString() + "/";
+    }    
 }
